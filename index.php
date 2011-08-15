@@ -1,4 +1,4 @@
-<html>
+<!doctype html>
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
@@ -131,7 +131,7 @@ window.onresize = CenterTable
   </center>
     <td width="739" height="29" bgcolor="#DDDDDD" align="center" colspan="3">
       <p align="left"><A class=Legal  
-      href="http://www.meltronicsgroup.com" onclick ="alert('Please connect to internet');">
+      href="http://www.meltronicsgroup.com" >
 	  www.meltronicsgroup.com</A>  <font color="#666666"> |&nbsp;</font><A class=Legal  
       href="http://www.meltronicsgroup.com/about.html" onclick = "alert('Please connect to internet');" 
       >About Us</A>  <font color="#666666">|</font> <A class=Legal  
@@ -142,7 +142,7 @@ window.onresize = CenterTable
   </tr>
   <tr>
     <td class=CopyrightText width="633" height="26" colspan="4" bgcolor="#C6C6C6">
-      <p align="right">&copy; 2011 Meltronics Systemtech Pvt. Ltd.,India</td>
+      <p align="right">&copy; <?php echo date('Y') ?> Meltronics Systemtech Pvt. Ltd.,India</td>
   </tr>
 </table>
 
