@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <meta name="GENERATOR" content="Microsoft FrontPage 4.0"><LINK 
-href="_CSS/global.css" type=text/css rel=stylesheet>
+href="_css/global.css" type=text/css rel=stylesheet>
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <title>Log in</title>
 </head>
