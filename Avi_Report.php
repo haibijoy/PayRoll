@@ -1,6 +1,11 @@
 <?php
 			include 'ServerDetail.php';
 			session_start();
+			
+			if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+}
+			
 			$_SESSION['company'] = "A";
 ?>			
 <html>
@@ -33,6 +38,7 @@ var Basic1;
 var HRA1;
 var CCA1;
 var mra1;
+var PF1;
 
 
 function IsLeapYear(Year)
@@ -218,10 +224,11 @@ function LoadSalDetails(data)
 	frmRecEntry.Deduct_Total.value	= items[11];
 	*/	
 	Basic1= items[0];
-	HRA1= items[1];
-	CCA1= items[2];
-	mra1= items[4];
-	frmRecEntry.tds.value			= items[10];
+	HRA1= items[2];
+	CCA1= items[3];
+	PF1=items[7];
+	mra1= items[11];
+	frmRecEntry.tds.value			= items[8];
 	calculateSalary();
 	//window.alert(Basic1);window.alert(HRA1);window.alert(CCA1);window.alert(mra1);
 }
@@ -247,7 +254,7 @@ function loadData(p1,p2)
 	var cYear = frmRecEntry.Dear.value;
 	cMon = frmRecEntry.Month.value;
 
-	var Pro_Tax = parseFloat(frmRecEntry.Pro_Tax.value);
+	var tds = parseFloat(frmRecEntry.tds.value);
 	//var Inc = parseFloat(frmRecEntry.Inc.value);
 	var PF = parseFloat(frmRecEntry.PF.value);
 	var esioff = parseFloat(frmRecEntry.esioff.value);
@@ -260,7 +267,7 @@ function loadData(p1,p2)
 	window.frames["iloader"].document.forms["loader"].param5.value = cYear;
 	window.frames["iloader"].document.forms["loader"].param6.value = cMon;
 	window.frames["iloader"].document.forms["loader"].param7.value = p2;
-	window.frames["iloader"].document.forms["loader"].param8.value = Pro_Tax;
+	window.frames["iloader"].document.forms["loader"].param8.value = tds;
 	//window.frames["iloader"].document.forms["loader"].param9.value = Inc;
 	window.frames["iloader"].document.forms["loader"].param10.value = Cur_PF;
 	window.frames["iloader"].document.forms["loader"].param11.value = esioff;
@@ -348,7 +355,7 @@ function calculateSalary()
 	//var HRA1 = parseFloat(frmRecEntry.HRA.value);
 	//var CCA1 = parseFloat(frmRecEntry.CCA.value);
 	//var mra1 = parseFloat(frmRecEntry.mra.value);
-	var PF = parseFloat(frmRecEntry.PF.value);
+	//var PF = parseFloat(frmRecEntry.PF.value);
 	var esi = parseFloat(frmRecEntry.esi.value);
 	var Others = parseFloat(frmRecEntry.Others.value);
 	var Advance = parseFloat(frmRecEntry.Advance.value);
@@ -369,15 +376,15 @@ function calculateSalary()
 	
 	
 	GrossA = Math.ceil(Gross );
-	ESal = Math.ceil((GrossA * Present)/ workingDays);
+	ESal = Math.ceil((GrossA * Present)/workingDays);
 	
 	
-	Basic=Math.ceil((Basic1 * Present)/ workingDays);
-	HRA=Math.ceil((HRA1 * Present)/ workingDays);
+	Basic=Math.ceil((Basic1 * Present)/workingDays);
+	HRA=Math.ceil((HRA1 * Present)/workingDays);
 	
 	lta=Math.ceil(Basic/12);
-	CCA=Math.ceil((CCA1 * Present)/ workingDays);
-	mra=Math.ceil((mra1 * Present)/ workingDays);
+	CCA=Math.ceil((CCA1 * Present)/workingDays);
+	mra=Math.ceil((mra1 * Present)/workingDays);
 	
 	if(Present<0|| Present==0)
 	{
@@ -416,17 +423,7 @@ function calculateSalary()
 	Pro_Tax=200;
 	
 	}
-	if(GrossA>0 && GrossA<15000)
-	{
-	esi=Math.ceil(Basic*0.0175);
-	esioff=Math.ceil(Basic*0.0475);
-	}
-	else
-	{
-	esi=0;
-	esioff=0;
 	
-	}
 	if(Dsgn.match(Dsgn1)=="Director")
 	{
 	PF=0;
@@ -434,14 +431,34 @@ function calculateSalary()
 	}
 	else
 	{
-	PF=Math.ceil(Basic*0.12);
-	pfoff=Math.ceil(Basic*0.1361);
+	PF=Math.ceil((PF1 * Present)/workingDays);
+	pfoff=Math.ceil((PF*13.61)/12);
+	//PF=Math.ceil(Basic*0.12);
+	//pfoff=Math.ceil(Basic*0.1361);
+	
 	}
 }
 	
 	specialallow=Math.ceil(ESal-(Basic+HRA+CCA+mra+lta));
 	
 	EarnTotal=Math.ceil(Basic+HRA+CCA+mra+lta+specialallow);
+	
+	if((GrossA>0 && GrossA<15000) && Present!=0)
+	{
+	esi=parseInt(GrossA*0.0175);
+	esioff=parseInt(GrossA*0.0475);
+	}
+	else if(EarnTotal==0 || EarnTotal<=0)
+	{
+	esi=0;
+	esioff=0;
+	}
+	else
+	{
+	esi=0;
+	esioff=0;
+	
+	}
 	
 	Total_Deduction = Math.ceil(PF + Pro_Tax + esi + tds + Advance + Others);
 	
@@ -491,7 +508,7 @@ var ESal,GrossA;
 	var Others = parseFloat(frmRecEntry.Others.value);
 	var Advance = parseFloat(frmRecEntry.Advance.value);
 	var tds = parseFloat(frmRecEntry.tds.value);
-	//var Inc = parseFloat(frmRecEntry.Inc.value);
+	var Inc = parseFloat(frmRecEntry.Inc.value);
 	var Dsgn=frmRecEntry.Dsgn.value;
 	var Dsgn1="Director";
 	
@@ -507,17 +524,17 @@ var ESal,GrossA;
 	
 	
 	GrossA = Math.ceil(Gross );
-	ESal = Math.ceil((GrossA * Present)/ workingDays);
+	ESal = Math.ceil((GrossA * Present)/workingDays);
 	
 	
 	
 		
-	Basic=Math.ceil((Basic1 * Present)/ workingDays);
-	HRA=Math.ceil((HRA1 * Present)/ workingDays);
+	Basic=Math.ceil((Basic1 * Present)/workingDays);
+	HRA=Math.ceil((HRA1 * Present)/workingDays);
 	
 	lta=Math.ceil(Basic/12);
-	CCA=Math.ceil((CCA1 * Present)/ workingDays);
-	mra=Math.ceil((mra1 * Present)/ workingDays);
+	CCA=Math.ceil((CCA1 * Present)/workingDays);
+	mra=Math.ceil((mra1 * Present)/workingDays);
 	
 	
 	if(Present<0|| Present==0)
@@ -558,17 +575,7 @@ var ESal,GrossA;
 	Pro_Tax=200;
 	
 	}
-	if(GrossA>0 && GrossA<15000)
-	{
-	esi=Math.ceil(Basic*0.0175);
-	esioff=Math.ceil(Basic*0.0475);
-	}
-	else
-	{
-	esi=0;
-	esioff=0;
 	
-	}
 	if(Dsgn.match(Dsgn1)=="Director")
 	{
 	PF=0;
@@ -576,14 +583,33 @@ var ESal,GrossA;
 	}
 	else
 	{
-	PF=Math.ceil(Basic*0.12);
-	pfoff=Math.ceil(Basic*0.1361);
+	PF=Math.ceil((PF1 * Present)/workingDays);
+	pfoff=Math.ceil((PF*13.61)/12);
+	//PF=Math.ceil(Basic*0.12);
+	//pfoff=Math.ceil(Basic*0.1361);
 	}
 		
 	}
 	specialallow=Math.ceil(ESal-(Basic+HRA+CCA+mra+lta));
 	
 	EarnTotal=Math.ceil(Basic+HRA+CCA+mra+lta+specialallow);
+	
+	if((GrossA>0 && GrossA<15000) && Present!=0)
+	{
+	esi=parseInt(GrossA*0.0175);
+	esioff=parseInt(GrossA*0.0475);
+	}
+	else if(EarnTotal==0 || EarnTotal<=0)
+	{
+	esi=0;
+	esioff=0;
+	}
+	else
+	{
+	esi=0;
+	esioff=0;
+	
+	}
 	
 	Total_Deduction = Math.ceil(PF + Pro_Tax + esi + tds + Advance + Others);
 	
@@ -616,6 +642,7 @@ var ESal,GrossA;
 	validateWord(document.frmRecEntry.Net_Salary,document.frmRecEntry.Rupees);	
 	
 }
+
 
 function ShowDetail()
 {
@@ -810,6 +837,21 @@ function GenerateAll_Detail()
             <td width="238" valign="center" colspan="3" height="21">
               <ul style="color: #D99548" type="square">
                 <li><a class = header href = "ShowYearlyReport.php?msg='Successfully Connection'"><font color="#000000">Yearly Reports</font></a></li>
+              </ul>
+            </td>
+          </tr>
+		   <tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+				<li><a class = header href = "SalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Convert PDF</font></a></li>
+               
+              </ul>
+            </td>
+          </tr>
+		  <tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+                <li><a class = header href = "MailsendSalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Mail Send</font></a></li>
               </ul>
             </td>
           </tr>
@@ -1039,7 +1081,7 @@ function GenerateAll_Detail()
     <td width="19%" height="19" align="right" bgcolor="#EEEEEE">Prof Tax</td>
     <td width="15%" height="19" bgcolor="#EEEEEE"><input type="text" name="Pro_Tax" size="20" readonly></td>
 	<td width="19%" height="19" align="right" bgcolor="#EEEEEE">TDS</td>
-    <td width="15%" height="19" bgcolor="#EEEEEE"><input type="text" name="tds" size="20" readonly></td>
+    <td width="15%" height="19" bgcolor="#EEEEEE"><input type="text" name="tds" size="20"></td>
         </tr>
         <tr>
     <td width="19%" height="19" align="right" bgcolor="#EEEEEE">Advance</td>

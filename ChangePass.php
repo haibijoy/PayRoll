@@ -2,7 +2,15 @@
 	include 'ServerDetail.php';
 
 	session_start();
+	
+	if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+}
+	
+	$username=$_SESSION['user'];
+	$password=$_SESSION['password'];
 	$Company = $_SESSION['company'];
+	
 ?>	
 <html>
 
@@ -24,6 +32,9 @@
 <?PHP
 
 	$Message = $_GET['Msg'];
+	
+	//$name 	= $_POST['user'];
+	//$password 	= $_POST['password'];
 
 	$socket = mysql_connect('localhost', $user, $pass);
 	if (! $socket)
@@ -145,7 +156,22 @@
                 <li><a class = header href = "ShowYearlyReport.php?msg='Successfully Connection'"><font color="#000000">Yearly Reports</font></a></li>
               </ul>
             </td>
-          </tr> 	   
+          </tr> 
+		<tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+				<li><a class = header href = "SalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Convert PDF</font></a></li>
+               
+              </ul>
+            </td>
+          </tr>
+		  <tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+                <li><a class = header href = "MailsendSalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Mail Send</font></a></li>
+              </ul>
+            </td>
+          </tr>
 	<tr>
             <td width="238" valign="top" colspan="3" height="21">&nbsp;</td>
         </tr>
@@ -214,26 +240,15 @@
         <table border="0" cellpadding="4" cellspacing="0" width="699" class="bodytext">
           <center>
           <tr>
-            <td width="201" height="19" align="right" bgcolor="#EEEEEE">User
+            <td width="201" height="19" align="right" bgcolor="#EEEEEE">Current User
               Name</td>
-<?php
 
-
-	$sel_qry = "select * from userinfo";
-
-	$sel_res= mysql_query($sel_qry);
-
-	while($rows = mysql_fetch_array($sel_res))
-	{
-
-		$name = $rows[0];
-		$pwd = $rows[1];
-	}
-
-
-?>
-
-    <td width="494" height="19" bgcolor="#EEEEEE" colspan="4"><input class = 'input' type="text" name="User" size="20" value="<?php echo $name; ?>"></td>
+    <td width="494" height="19" bgcolor="#EEEEEE" colspan="4"><input class = 'input' type="text" name="User" size="20" value="<?php echo $username; ?>"></td>
+  </tr>
+  
+  <tr>
+    <td width="201" height="19" align="right" bgcolor="#EEEEEE">Enter the New User</td>
+    <td width="494" height="19" bgcolor="#EEEEEE" colspan="4"><input class = 'input' type="text" name="NewUser" size="20"></td>
   </tr>
   
   <tr>
@@ -265,6 +280,24 @@
 </td>
 
 	<td width="62" height="19" bgcolor="#EEEEEE">&nbsp;</td>
+	
+	<?php
+
+
+	$sel_qry = "select USER_NAME,PASS_WORD from userinfo WHERE USER_NAME='${User}' AND PASS_WORD='${OldPass}'";
+
+	$sel_res= mysql_query($sel_qry);
+
+	while($rows = mysql_fetch_array($sel_res))
+	{
+
+		$name = $rows[0];
+		$pwd = $rows[1];
+	}
+
+
+?>
+
 
 	<td width="123" height="19" bgcolor="#EEEEEE">&nbsp;</td>
 
@@ -291,8 +324,8 @@
 
 <input name ='ChangeMsg' type = 'hidden' value="<?php echo $Message ?>">
 
-<input name ='pwd' type = 'hidden' value="<?php echo $pwd ?>">
-<input name ='name' type = 'hidden' value="<?php echo $name ?>">
+<input name ='pwd' type = 'hidden' value="<?php echo $username ?>">
+<input name ='name' type = 'hidden' value="<?php echo $password ?>">
 
 
 </form>
@@ -304,6 +337,7 @@ function validate()
 	frmRecEntry.operation.value = 'ChangePass';
 	
 	var UserName = frmRecEntry.User.value;
+	var NewUserName = frmRecEntry.NewUser.value;
 	var OldPassword = frmRecEntry.OldPass.value;
 	var NewPassword = frmRecEntry.NewPass.value;
 	var ConfirmPass = frmRecEntry.ConPass.value;
@@ -327,6 +361,13 @@ function validate()
 		alert("Confirmation password is not matching with new password!");
 		return;
 	}
+	else if(NewUserName==UserName)
+	{
+		frmRecEntry.NewPass.focus();
+		alert("Enter the New User Name!");
+		return; 
+	}
+	
 
 	frmRecEntry.submit();
 }

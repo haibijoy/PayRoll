@@ -1,6 +1,11 @@
 <?php
 			include 'ServerDetail.php';
 			session_start();
+			
+			if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+		}
+			
 			$_SESSION['company'] = "B";
 ?>			
 <html>
@@ -33,6 +38,7 @@ var Basic1;
 var HRA1;
 var CCA1;
 var mra1;
+var PF1;
 
 
 
@@ -219,10 +225,11 @@ function LoadSalDetails(data)
 	frmRecEntry.Deduct_Total.value	= items[11];
 	*/	
 	Basic1= items[0];
-	HRA1= items[1];
-	CCA1= items[2];
-	mra1= items[4];
-	frmRecEntry.tds.value			= items[10];
+	HRA1= items[2];
+	CCA1= items[3];
+	PF1=items[7];
+	mra1= items[11];
+	frmRecEntry.tds.value			= items[8];
 	calculateSalary();
 	//window.alert(Basic1);window.alert(HRA1);window.alert(CCA1);window.alert(mra1);
 }
@@ -248,7 +255,7 @@ function loadData(p1,p2)
 	var cYear = frmRecEntry.Dear.value;
 	cMon = frmRecEntry.Month.value;
 
-	var Pro_Tax = parseFloat(frmRecEntry.Pro_Tax.value);
+	var tds = parseFloat(frmRecEntry.tds.value);
 	//var Inc = parseFloat(frmRecEntry.Inc.value);
 	var PF = parseFloat(frmRecEntry.PF.value);
 	var esioff = parseFloat(frmRecEntry.esioff.value);
@@ -261,7 +268,7 @@ function loadData(p1,p2)
 	window.frames["iloader"].document.forms["loader"].param5.value = cYear;
 	window.frames["iloader"].document.forms["loader"].param6.value = cMon;
 	window.frames["iloader"].document.forms["loader"].param7.value = p2;
-	window.frames["iloader"].document.forms["loader"].param8.value = Pro_Tax;
+	window.frames["iloader"].document.forms["loader"].param8.value = tds;
 	//window.frames["iloader"].document.forms["loader"].param9.value = Inc;
 	window.frames["iloader"].document.forms["loader"].param10.value = Cur_PF;
 	window.frames["iloader"].document.forms["loader"].param11.value = esioff;
@@ -416,17 +423,7 @@ function calculateSalary()
 	Pro_Tax=200;
 	
 	}
-	if(GrossA>0 && GrossA<15000)
-	{
-	esi=Math.ceil(Basic*0.0175);
-	esioff=Math.ceil(Basic*0.0475);
-	}
-	else
-	{
-	esi=0;
-	esioff=0;
 	
-	}
 	if(Dsgn.match(Dsgn1)=="Director")
 	{
 	PF=0;
@@ -434,14 +431,33 @@ function calculateSalary()
 	}
 	else
 	{
-	PF=Math.ceil(Basic*0.12);
-	pfoff=Math.ceil(Basic*0.1361);
+	PF=Math.ceil((PF1 * Present)/workingDays);
+	pfoff=Math.ceil((PF*13.61)/12);
+	//PF=Math.ceil(Basic*0.12);
+	//pfoff=Math.ceil(Basic*0.1361);
 	}
 }
 	
 	specialallow=Math.ceil(ESal-(Basic+HRA+CCA+mra+lta));
 	
 	EarnTotal=Math.ceil(Basic+HRA+CCA+mra+lta+specialallow);
+	
+	if((GrossA>0 && GrossA<15000) && Present!=0)
+	{
+	esi=parseInt(GrossA*0.0175);
+	esioff=parseInt(GrossA*0.0475);
+	}
+	else if(EarnTotal==0 || EarnTotal<=0)
+	{
+	esi=0;
+	esioff=0;
+	}
+	else
+	{
+	esi=0;
+	esioff=0;
+	
+	}
 	
 	Total_Deduction = Math.ceil(PF + Pro_Tax + esi + tds + Advance + Others);
 	
@@ -508,9 +524,6 @@ var ESal,GrossA;
 	
 	GrossA = Math.ceil(Gross );
 	ESal = Math.ceil((GrossA * Present)/workingDays);
-	
-	
-	
 		
 	Basic=Math.ceil((Basic1 * Present)/workingDays);
 	HRA=Math.ceil((HRA1 * Present)/workingDays);
@@ -576,14 +589,33 @@ var ESal,GrossA;
 	}
 	else
 	{
-	PF=Math.ceil(Basic*0.12);
-	pfoff=Math.ceil(Basic*0.1361);
+	PF=Math.ceil((PF1 * Present)/workingDays);
+	pfoff=Math.ceil((PF*13.61)/12);
+	//PF=Math.ceil(Basic*0.12);
+	//pfoff=Math.ceil(Basic*0.1361);
 	}
 		
 	}
 	specialallow=Math.ceil(ESal-(Basic+HRA+CCA+mra+lta));
 	
 	EarnTotal=Math.ceil(Basic+HRA+CCA+mra+lta+specialallow);
+	
+	if((GrossA>0 && GrossA<15000) && Present!=0)
+	{
+	esi=parseInt(GrossA*0.0175);
+	esioff=parseInt(GrossA*0.0475);
+	}
+	else if(EarnTotal==0 || EarnTotal<=0)
+	{
+	esi=0;
+	esioff=0;
+	}
+	else
+	{
+	esi=0;
+	esioff=0;
+	
+	}
 	
 	Total_Deduction = Math.ceil(PF + Pro_Tax + esi + tds + Advance + Others);
 	
@@ -811,7 +843,22 @@ function GenerateAll_Detail()
                 <li><a class = header href = "ShowYearlyReport.php?msg='Successfully Connection'"><font color="#000000">Yearly Reports</font></a></li>
               </ul>
             </td>
-          </tr>  
+          </tr> 
+		 <tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+				<li><a class = header href = "SalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Convert PDF</font></a></li>
+               
+              </ul>
+            </td>
+          </tr>
+		  <tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+                <li><a class = header href = "MailsendSalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Mail Send</font></a></li>
+              </ul>
+            </td>
+          </tr>
           <tr>
             <td width="238" valign="top" colspan="3" height="21">&nbsp;</td>
           </tr>

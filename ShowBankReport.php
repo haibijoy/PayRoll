@@ -1,5 +1,10 @@
 <?PHP
 	session_start();
+	
+	if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+			}
+	
 	$Company = $_SESSION['company'];
 ?>	
 
@@ -170,6 +175,21 @@ function PreviewData()
             <td width="238" valign="center" colspan="3" height="21">
               <ul style="color: #D99548" type="square">
                 <li><a class = header href = "ShowYearlyReport.php?msg='Successfully Connection'"><font color="#000000">Yearly Reports</font></a></li>
+              </ul>
+            </td>
+          </tr>
+		 <tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+				<li><a class = header href = "SalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Convert PDF</font></a></li>
+               
+              </ul>
+            </td>
+          </tr>
+		  <tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+                <li><a class = header href = "MailsendSalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Mail Send</font></a></li>
               </ul>
             </td>
           </tr>

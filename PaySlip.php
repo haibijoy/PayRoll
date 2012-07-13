@@ -62,7 +62,7 @@ if($Company == 'M')
 else if($Company == 'A')
    echo "<td width='50%' valign='bottom' height='35'><img border='0' src='img/avi_logo.gif' width='123' height='30'></td>";
  else if($Company == 'I')
-    echo "<td width='50%' valign='bottom' height='35'><img border='0' src='img/logo.gif' width='123' height='30'></td>";
+    echo "<td width='50%' valign='bottom' height='35'><img border='0' src='img/logo8.bmp' width='123' height='30'></td>";
  else 
     echo "<td width='50%' valign='bottom' height='35'><img border='0' src='img/logo.gif' width='123' height='30'></td>";
 
@@ -213,7 +213,7 @@ Pay Slip for the month of <?php echo $MonthName[$FMonth]; echo " $FYear";?></fon
                   </tr>
                 
                   <tr>
-              <td width="37%" bgcolor="#EEEEEE" align="right"><?php echo $rows[22]; ?>Others :</td>
+              <td width="37%" bgcolor="#EEEEEE" align="right">Others :</td>
               <td width="32%" bgcolor="#EEEEEE" >
                 <p><?php echo $rows[16] = ($rows[16] == 0) ? "NIL" : $rows[16]; ?></td>
                   </tr>
@@ -287,8 +287,7 @@ Pay Slip for the month of <?php echo $MonthName[$FMonth]; echo " $FYear";?></fon
                 : <?php echo $rows[23]; ?></td>
             </tr>
             <tr>
-              <td width="57%" bgcolor="#E0E0E0" colspan="2" height="60" valign="bottom" class = header><center>Authorized
-                Signature</center></td>
+              <td width="57%" bgcolor="#E0E0E0" colspan="2" height="60" valign="bottom" class = header><center>System Generator Salary slip</center></td>
               <td width="57%" bgcolor="#E0E0E0" colspan="2" height="60" valign="bottom">
                 <table border="0" width="100%" cellspacing="0" cellpadding="4"  class = bodytext>
                   <tr>
@@ -324,15 +323,15 @@ if($Company == 'M')
 else if($Company == 'A')
 {
 	echo "<p class = header align='center' style='margin-bottom: -15'>Avitronics Systemtech(India) Pvt.Ltd,</p>";
-	echo "<p class = bodytext style='margin-bottom: -15' align='center'>#107, Jeevith Gardens, Beside Brookefields,Off. ITPL Road, Kundalahalli, Bangalore-560 037<p>";
-	echo "<p class = bodytext style='margin-bottom: -15' align='center'>Tel : 91-80-285495185 Fax : 080-28540787<p>";
+	echo "<p class = bodytext style='margin-bottom: -15' align='center'>#625, 1st Main, C Block,AECS Layout, Kundalahalli, Bangalore-560 037<p>";
+	echo "<p class = bodytext style='margin-bottom: -15' align='center'>Tel : 91-80-28525400/01/02 Fax : 080-28540787<p>";
 	echo "<BR><BR><BR><BR><BR><BR><BR>";
 }
 
 else if($Company == 'I')
 {
 	echo "<p class = header align='center' style='margin-bottom: -15'>Meltronics Systemtech Pvt. Ltd.,</p>";
-	echo "<p class = bodytext style='margin-bottom: -15' align='center'>625, 1st Main, C Block,AECS Layout, Kundalahalli, Bangalore-560 037<p>";
+	echo "<p class = bodytext style='margin-bottom: -15' align='center'>#625, 1st Main, C Block,AECS Layout, Kundalahalli, Bangalore-560 037<p>";
 	echo "<p class = bodytext style='margin-bottom: -15' align='center'>Tel : 91-80-28525400/01/02 Fax : 080-28540787<p>";
 	echo "<BR><BR><BR><BR><BR><BR><BR>";
 
@@ -341,7 +340,7 @@ else if($Company == 'I')
 else 
 {
 	echo "<p class = header align='center' style='margin-bottom: -15'>Meltronics Business strategies,</p>";
-	echo "<p class = bodytext style='margin-bottom: -15' align='center'>625, 1st Main, C Block,AECS Layout, Kundalahalli, Bangalore-560 037<p>";
+	echo "<p class = bodytext style='margin-bottom: -15' align='center'>#625, 1st Main, C Block,AECS Layout, Kundalahalli, Bangalore-560 037<p>";
 	echo "<p class = bodytext style='margin-bottom: -15' align='center'>Tel : 91-80-28525400/01/02 Fax : 080-28540787<p>";
 	echo "<BR><BR><BR><BR><BR><BR><BR>";
 

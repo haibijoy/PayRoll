@@ -1,6 +1,11 @@
 <?PHP
 	include 'ServerDetail.php';
 	session_start();
+	
+	if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+			}
+	
 	$Company = $_SESSION['company'];
 ?>
 

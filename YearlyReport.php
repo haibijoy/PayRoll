@@ -3,6 +3,11 @@
 		include 'ServerDetail.php';
 
 		session_start();
+		
+		if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+			}
+		
 		$Company = $_SESSION['company'];
 ?>
 
@@ -74,30 +79,33 @@
 			or die ("Could not connect to database: $db".mysql_error() );		
 				$iRecCount = 0;
 		
-		if($Cat == "1")
-		{
+	if($Cat == "1")
+	{
 			if(($iRecCount % 40) == 0)
 			{			
 				echo("<tr class=header >");
-                		echo("<td width='130' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
-                  		echo("Name");
+                		echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpName");
+                		echo("</td>");
+						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpID");
                 		echo("</td>");
                 		echo("<td width='70' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Month");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Year");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("PFNO");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
-                  		echo("Individual's Contribution");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                  		echo("Emp PF");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
-                  		echo("Company's Contribution");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                  		echo("Comp PF");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("TotalPF");
                 		echo("</td>");
                		echo("</tr>");
@@ -105,8 +113,7 @@
 
 		if($Yr1 == $Yr2)
 		{
-			$query = "select e.NAME,e.PFNO,p.MONTH,p.YEAR,p.PF from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				p.PF != '0' AND p.MONTH >= $Mon1 & p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
+			$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,e.PFNO,p.PF,p.PFCOM from employee e, paydetails1 p where e.NAME = '".$Name."' AND 	p.PF != '0' AND p.MONTH >= $Mon1 & p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 			//echo $query;
 			$result = mysql_query($query);
 
@@ -116,34 +123,35 @@
 			while ($rows = mysql_fetch_array($result))
 			{
 				$Month = $rows[2];
-				$TotalPF = 2 * $rows[4];
+				$TotalPF = ($rows[5] + $rows[6]);
 	
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotalPF</td>");				
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='70' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='50' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[5]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[6]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotalPF</td>");				
 				echo("</tr>");
 
 			}
 			mysql_free_result($result);
 			
-			$query = "select sum(p.PF) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				p.PF != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";		
+			$query = "select sum(p.PF),sum(p.PFCOM) from employee e, paydetails1 p where e.NAME = '".$Name."' AND p.PF != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";		
 
 			$result = mysql_query($query);
 		
 			$rows = mysql_fetch_array($result);
-			$GrdTot_PF = 2 * $rows[0];
+			
+			$GrdTot_PF = ($rows[0]+$rows[1]);
 		
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[0]</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[0]</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTot_PF</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 5  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[0]</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTot_PF</td>");
 			echo("</tr>");
 
 			mysql_free_result($result);
@@ -160,8 +168,7 @@
 
 				do
 				{
-				$query = "select e.NAME,e.PFNO,p.MONTH,p.YEAR,p.PF from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				 p.PF != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
+				$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,e.PFNO,p.PF,pPFCOM from employee e, paydetails1 p where e.NAME = '".$Name."' AND p.PF != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 				//echo $query;
 
 				$result = mysql_query($query);
@@ -172,30 +179,32 @@
 				while ($rows = mysql_fetch_array($result))
 				{
 					$Month = $rows[2];
-					$TotalPF = 2 * $rows[4];
-
-					echo("<tr class = bodytext>");
-					echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotalPF</td>");					echo("</tr>");
+				$TotalPF = ($rows[5] + $rows[6]);
+	
+				echo("<tr class = bodytext>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[5]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[6]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotalPF</td>");				
+				echo("</tr>");				
 
 				}
 				mysql_free_result($result);
 				
-				$query = "select sum(p.PF) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				p.PF != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";		
+				$query = "select sum(p.PF),sum(p.PFCOM) from employee e, paydetails1 p where e.NAME = '".$Name."' AND p.PF != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";		
 				//echo $query;
 
 				$result = mysql_query($query);
 		
 				$rows = mysql_fetch_array($result);
 				
-				$GrdTot_PF += (2 * $rows[0]);
-				$Share_PF += $rows[0];  
+				$GrdTot_PF += ($rows[0]+$rows[1]);
+				$Share_PF += $rows[0]; 
+				$Share_PFCom += $rows[1];
 
 				mysql_free_result($result);
 				
@@ -207,7 +216,7 @@
 			}
 			$TotalPF = 0;
 
-			$query = "select e.NAME,e.PFNO,p.MONTH,p.YEAR,p.PF from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,e.PFNO,p.PF,p.PFCOM from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 			 p.PF != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 			//echo $query;
 
@@ -219,35 +228,37 @@
 			while ($rows = mysql_fetch_array($result))
 			{
 				$Month = $rows[2];
-				$TotalPF = 2 * $rows[4];
-
+				$TotalPF = ($rows[5] + $rows[6]);
+	
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotalPF</td>");
-				echo("</tr>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[5]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[6]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotalPF</td>");				
+				echo("</tr>");		
 			}
 			mysql_free_result($result);
 
-			$query = "select sum(p.PF) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select sum(p.PF),sum(p.PFCOM) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.PF != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 		
 			$result = mysql_query($query);			
 
 			$rows = mysql_fetch_array($result);
 
-			$GrdTot_PF += (2 * $rows[0]);
+			$GrdTot_PF += ($rows[0] + $rows[1]);
 			$Share_PF += $rows[0];
+			$Share_PFCom += $rows[1];
 
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Share_PF</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Share_PF</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTot_PF</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Share_PF</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Share_PFCom</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTot_PF</td>");
 			echo("</tr>");
 			
 			mysql_free_result($result);			
@@ -260,36 +271,38 @@
 			if(($iRecCount % 40) == 0)
 			{			
 				echo("<tr class=header >");
-                		echo("<td width='130' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
-                  		echo("Name");
+                		echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpName");
                 		echo("</td>");
-                		echo("<td width='70' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpID");
+                		echo("</td>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Month");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Year");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("ESINO");
                 		echo("</td>");
-				echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
-                  	echo("Individual's Contribution");
+						echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+						echo("Emp ESI");
                 		echo("</td>");
 
-				echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
-                  	echo("Company's Contribution");
+						echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+						echo("Comp ESI");
                 		echo("</td>");
 
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("ESIAmt");
                 		echo("</td>");
-               		echo("</tr>");
+						echo("</tr>");
 			}
 
 		if($Yr1 == $Yr2)
 		{
-			$query = "select e.NAME,e.ESINO,p.MONTH,p.YEAR,p.ESI,p.ESI_CMP from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				p.ESI != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
+			$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,e.ESINO,p.ESI,p.ESI_CMP from employee e, paydetails1 p where e.NAME = '".$Name."' AND p.ESI != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
 
@@ -299,23 +312,24 @@
 			while ($rows = mysql_fetch_array($result))
 			{
 				$Month = $rows[2];
-				$TotI_ESI = $rows[4];				
-				$TotC_ESI = $rows[5];
+				$TotI_ESI = $rows[5];				
+				$TotC_ESI = $rows[6];
 				$Total_ESI = $TotI_ESI + $TotC_ESI;
 
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotI_ESI</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotC_ESI</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total_ESI</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotI_ESI</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotC_ESI</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total_ESI</td>");
 				echo("</tr>");
 			}
 			mysql_free_result($result);
 
-			$query = "select sum(p.ESI),sum(p.ESI_CMP) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select sum(p.ESI),sum(p.ESI_CMP) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.ESI != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 		
 			$result = mysql_query($query);
@@ -327,10 +341,10 @@
 			$GrdTot_ESI = $GrdTotI_ESI + $GrdTotC_ESI;
 
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTotI_ESI</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTotC_ESI</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTot_ESI</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 5  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTotI_ESI</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTotC_ESI</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTot_ESI</td>");
 			echo("</tr>");
 			
 			mysql_free_result($result);
@@ -351,7 +365,7 @@
 				$StMon = $Mon1;
 				do
 				{
-				$query = "select e.NAME,e.ESINO,p.MONTH,p.YEAR,p.ESI,p.ESI_CMP from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+				$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,e.ESINO,p.ESI,p.ESI_CMP from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.ESI != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 				$result = mysql_query($query);
@@ -361,25 +375,26 @@
 
 				while ($rows = mysql_fetch_array($result))
 				{
-					$Month = $rows[2];
-					$TotI_ESI = $rows[4];				
-					$TotC_ESI = $rows[5];
-					$Total_ESI = $TotI_ESI + $TotC_ESI;
+				$Month = $rows[2];
+				$TotI_ESI = $rows[5];				
+				$TotC_ESI = $rows[6];
+				$Total_ESI = $TotI_ESI + $TotC_ESI;
 
-					echo("<tr class = bodytext>");
-					echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotI_ESI</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotC_ESI</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total_ESI</td>");
-					echo("</tr>");
+				echo("<tr class = bodytext>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotI_ESI</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotC_ESI</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total_ESI</td>");
+				echo("</tr>");
 
 				}
 				mysql_free_result($result);
 				
-				$query = "select sum(p.ESI),sum(p.ESI_CMP) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+				$query = "select sum(p.ESI),sum(p.ESI_CMP) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.ESI != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 		
 				$result = mysql_query($query);
@@ -401,7 +416,7 @@
 				}while($Yr1 != $Yr2);
 
 			}
-			$query = "select e.NAME,e.ESINO,p.MONTH,p.YEAR,p.ESI,p.ESI_CMP from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,e.ESINO,p.ESI,p.ESI_CMP from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 			p.ESI != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
@@ -412,24 +427,25 @@
 			while ($rows = mysql_fetch_array($result))
 			{
 				$Month = $rows[2];
-				$TotI_ESI = $rows[4];				
-				$TotC_ESI = $rows[5];
+				$TotI_ESI = $rows[5];				
+				$TotC_ESI = $rows[6];
 				$Total_ESI = $TotI_ESI + $TotC_ESI;
 
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotI_ESI</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotC_ESI</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total_ESI</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotI_ESI</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$TotC_ESI</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total_ESI</td>");
 				echo("</tr>");
 
 			}
 			mysql_free_result($result);
 
-			$query = "select sum(p.ESI),sum(p.ESI_CMP) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select sum(p.ESI),sum(p.ESI_CMP) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.ESI != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 		
 			$result = mysql_query($query);
@@ -444,10 +460,10 @@
 			$GrdTot_ESI += $GrdTotI_ESI + $GrdTotC_ESI;
 
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$ShareI_ESI</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$ShareC_ESI </td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTot_ESI</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$ShareI_ESI</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$ShareC_ESI </td>");
+			echo("<td width='35' bgcolor='#C0C0C0' align = 'center' valign='middle'>$GrdTot_ESI</td>");
 			echo("</tr>");
 
 			mysql_free_result($result);
@@ -460,16 +476,19 @@
 			if(($iRecCount % 40) == 0)
 			{			
 				echo("<tr class=header >");
-                		echo("<td width='130' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
-                  		echo("Name");
+                		echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpName");
                 		echo("</td>");
-                		echo("<td width='70' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpID");
+                		echo("</td>");
+                		echo("<td width='50' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Month");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Year");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("IT/TDSAmt.");
                 		echo("</td>");
                		echo("</tr>");
@@ -477,8 +496,8 @@
 
 		if($Yr1 == $Yr2)
 		{
-			$query = "select e.NAME,p.MONTH,p.YEAR,p.IT from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				p.IT != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
+			$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,p.TDS from employee e, paydetails1 p where e.NAME = '".$Name."' AND
+				p.TDS != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
 
@@ -487,27 +506,28 @@
 
 			while ($rows = mysql_fetch_array($result))
 			{
-				$Month = $rows[1];
+				$Month = $rows[2];
 
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[2]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
 				echo("</tr>");
 			}
 			mysql_free_result($result);
 
-			$query = "select sum(p.IT) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				p.IT != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
+			$query = "select sum(p.TDS) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
+				p.TDS != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 		
 			$result = mysql_query($query);
 		
 			$rows = mysql_fetch_array($result);
 		
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 3  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[0]</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[0]</td>");
 			echo("</tr>");
 			
 			mysql_free_result($result);
@@ -521,8 +541,8 @@
 				$StMon = $Mon1;
 				do
 				{
-				$query = "select e.NAME,p.MONTH,p.YEAR,p.IT from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				p.IT != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
+				$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,p.TDS from employee e, paydetails1 p where e.NAME = '".$Name."' AND
+				p.TDS != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 				$result = mysql_query($query);
 
@@ -531,20 +551,20 @@
 
 				while ($rows = mysql_fetch_array($result))
 				{
-					$Month = $rows[1];
+					$Month = $rows[2];
 
-					echo("<tr class = bodytext>");
-					echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[2]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-					echo("</tr>");
-
+				echo("<tr class = bodytext>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
+				echo("</tr>");
 				}
 				mysql_free_result($result);
 
-				$query = "select sum(p.IT) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				p.IT != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
+				$query = "select sum(p.TDS) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
+				p.TDS != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 		
 				$result = mysql_query($query);
 		
@@ -559,8 +579,8 @@
 				}while($Yr1 != $Yr2);
 
 			}
-			$query = "select e.NAME,p.MONTH,p.YEAR,p.IT from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-			p.IT != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
+			$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,p.TDS from employee e, paydetails1 p where e.NAME = '".$Name."' AND
+			p.TDS != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
 
@@ -569,20 +589,20 @@
 
 			while ($rows = mysql_fetch_array($result))
 			{
-				$Month = $rows[1];
+				$Month = $rows[2];
 
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[2]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
 				echo("</tr>");
-
 			}
 			mysql_free_result($result);
 
-			$query = "select sum(p.IT) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
-				p.IT != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
+			$query = "select sum(p.TDS) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
+				p.TDS != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 		
 			$result = mysql_query($query);
 		
@@ -591,8 +611,8 @@
 			$Total += $rows[0];		
 		
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 3  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total</td>");
 			echo("</tr>");
 			
 			mysql_free_result($result);
@@ -606,16 +626,19 @@
 			if(($iRecCount % 40) == 0)
 			{			
 				echo("<tr class=header >");
-                		echo("<td width='130' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
-                  		echo("Name");
+                		echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpName");
+                		echo("</td>");
+						echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpID");
                 		echo("</td>");
                 		echo("<td width='70' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Month");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Year");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Loan");
                 		echo("</td>");
                		echo("</tr>");
@@ -624,7 +647,7 @@
 
 		if($Yr1 == $Yr2)
 		{
-			$query = "select e.NAME,e.LOAN,p.MONTH,p.YEAR from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select e.NAME,e.LOAN,p.MONTH,p.YEAR from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				e.LOAN != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
@@ -637,15 +660,15 @@
 				$Month = $rows[2];
 
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
 				echo("</tr>");
 			}
 			mysql_free_result($result);
 			
-			$query = "select sum(e.LOAN) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select sum(e.LOAN) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				e.LOAN != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
@@ -653,8 +676,8 @@
 			$rows = mysql_fetch_array($result);
 		
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 3  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[0]</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 3  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[0]</td>");
 			echo("</tr>");
 			
 			mysql_free_result($result);
@@ -668,7 +691,7 @@
 				$StMon = $Mon1;
 				do
 				{
-				$query = "select e.NAME,e.LOAN,p.MONTH,p.YEAR from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+				$query = "select e.NAME,e.LOAN,p.MONTH,p.YEAR from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				e.LOAN != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 				$result = mysql_query($query);
@@ -681,16 +704,16 @@
 					$Month = $rows[2];
 
 					echo("<tr class = bodytext>");
-					echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
+					echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+					echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+					echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+					echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
 					echo("</tr>");
 
 				}
 				mysql_free_result($result);
 				
-				$query = "select sum(e.LOAN) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+				$query = "select sum(e.LOAN) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				e.LOAN != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 				$result = mysql_query($query);
@@ -706,7 +729,7 @@
 				}while($Yr1 != $Yr2);
 
 			}
-			$query = "select e.NAME,e.LOAN,p.MONTH,p.YEAR from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select e.NAME,e.LOAN,p.MONTH,p.YEAR from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 			e.LOAN != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
@@ -719,16 +742,16 @@
 				$Month = $rows[2];
 
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
 				echo("</tr>");
 
 			}
 			mysql_free_result($result);
 			
-			$query = "select sum(e.LOAN) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select sum(e.LOAN) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				e.LOAN != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
@@ -738,8 +761,8 @@
 			$Total += $rows[0];		
 		
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 3  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 3  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total</td>");
 			echo("</tr>");
 			
 			mysql_free_result($result);
@@ -753,16 +776,19 @@
 			if(($iRecCount % 40) == 0)
 			{			
 				echo("<tr class=header >");
-                		echo("<td width='130' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
-                  		echo("Name");
+                		echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpName");
+                		echo("</td>");
+						echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                  		echo("EmpID");
                 		echo("</td>");
                 		echo("<td width='70' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Month");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Year");
                 		echo("</td>");
-                		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Others");
                 		echo("</td>");
                		echo("</tr>");
@@ -770,7 +796,7 @@
 
 		if($Yr1 == $Yr2)
 		{
-			$query = "select e.NAME,p.MONTH,p.YEAR,p.OTHERS from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,p.OTHERS from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.OTHERS != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
@@ -780,18 +806,19 @@
 
 			while ($rows = mysql_fetch_array($result))
 			{
-				$Month = $rows[1];
+				$Month = $rows[2];
 
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[2]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
 				echo("</tr>");
 			}
 			mysql_free_result($result);
 			
-			$query = "select sum(p.OTHERS) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select sum(p.OTHERS) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.OTHERS != '0' AND p.MONTH >= $Mon1 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
@@ -799,8 +826,8 @@
 			$rows = mysql_fetch_array($result);
 		
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 3  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[0]</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[0]</td>");
 			echo("</tr>");
 			
 			mysql_free_result($result);
@@ -814,7 +841,7 @@
 				$StMon = $Mon1;
 				do
 				{
-				$query = "select e.NAME,p.MONTH,p.YEAR,p.OTHERS from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+				$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,p.OTHERS from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.OTHERS != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 				
 				$result = mysql_query($query);
@@ -824,19 +851,20 @@
 
 				while ($rows = mysql_fetch_array($result))
 				{
-					$Month = $rows[1];
+					$Month = $rows[2];
 
-					echo("<tr class = bodytext>");
-					echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[2]</td>");
-					echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
-					echo("</tr>");
+				echo("<tr class = bodytext>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
+				echo("</tr>");
 
 				}
 				mysql_free_result($result);
 			
-				$query = "select sum(p.OTHERS) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+				$query = "select sum(p.OTHERS) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.OTHERS != '0' AND p.MONTH >= $StMon AND p.MONTH <= 11 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 				$result = mysql_query($query);
@@ -852,7 +880,7 @@
 				}while($Yr1 != $Yr2);
 
 			}
-			$query = "select e.NAME,p.MONTH,p.YEAR,p.OTHERS from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select e.NAME,e.EMP_NO,p.MONTH,p.YEAR,p.OTHERS from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 			p.OTHERS != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
@@ -862,19 +890,20 @@
 
 			while ($rows = mysql_fetch_array($result))
 			{
-				$Month = $rows[1];
+				$Month = $rows[2];
 
 				echo("<tr class = bodytext>");
-				echo("<td width='130' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[2]</td>");
-				echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");	
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");	
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$MonthName[$Month]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
+				echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
 				echo("</tr>");
 
 			}
 			mysql_free_result($result);	
 			
-			$query = "select sum(p.OTHERS) from employee e, paydetails11 p where e.NAME = '".$Name."' AND
+			$query = "select sum(p.OTHERS) from employee e, paydetails1 p where e.NAME = '".$Name."' AND
 				p.OTHERS != '0' AND p.MONTH >= 0 AND p.MONTH <= $Mon2 AND p.YEAR = '$Yr1' AND e.NAME = p.NAME ";
 
 			$result = mysql_query($query);
@@ -884,8 +913,8 @@
 			$Total += $rows[0];		
 		
 			echo("<tr class = header>");
-			echo("<td width='25' bgcolor='#C0C0C0' colspan  = 3  valign='middle'>Total</td>");
-			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' colspan  = 4  valign='middle'>Total</td>");
+			echo("<td width='40' bgcolor='#C0C0C0' align = 'center' valign='middle'>$Total</td>");
 			echo("</tr>");
 			
 			mysql_free_result($result);

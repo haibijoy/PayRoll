@@ -2,6 +2,11 @@
 
 	include 'ServerDetail.php';
 	session_start();
+	
+	if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+			}
+	
 	$Company = $_SESSION['company'];
 ?>
 
@@ -99,8 +104,8 @@
 		{
 			echo("<tr class = bodytext>");
 
-			echo("<td width='150' bgcolor='#C0C0C0' >$rows[0]</td>");
-			echo("<td width='150' bgcolor='#C0C0C0' >$rows[1]</td>");
+			echo("<td width='100' bgcolor='#C0C0C0' >$rows[0]</td>");
+			echo("<td width='70' bgcolor='#C0C0C0' >$rows[1]</td>");
 			echo("<td width='70' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[2]</td>");
 			echo("<td width='70' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
 			echo("</tr>");

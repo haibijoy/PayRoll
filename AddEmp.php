@@ -2,6 +2,11 @@
 	include 'ServerDetail.php';
 
 	session_start();
+	
+	if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+}
+	
 	$Company = $_SESSION['company'];
 ?>	
 <html>
@@ -153,6 +158,7 @@ function DisplayDetails(OptVal)
 			frmRecEntry.Pro_Tax.value="";
 			frmRecEntry.tds.value="";
 			frmRecEntry.cmbDsgn.value="";
+			frmRecEntry.mailid.value="";
 			frmRecEntry.Deduct_Total.value="";
 			frmRecEntry.Net_Salary.value="";
 			frmRecEntry.Annum_Salary.value="";
@@ -170,6 +176,7 @@ function DisplayDetails(OptVal)
 		frmRecEntry.Inc.value="0";
 		frmRecEntry.txtPFNo.readOnly = false;
 		frmRecEntry.txtESINo.readOnly = false;
+		frmRecEntry.mailid.readOnly = false;
 		
 		frmRecEntry.Save.value = 'Save';
 
@@ -186,6 +193,7 @@ function DisplayDetails(OptVal)
 		frmRecEntry.GrossSalary.readOnly = true;
 		frmRecEntry.txtPFNo.readOnly = true;
 		frmRecEntry.txtESINo.readOnly = true;
+		frmRecEntry.mailid.readOnly = true;
 		frmRecEntry.Save.value = 'Delete';
 		frmRecEntry.Add_Edit.value = 'Delete';
 		}
@@ -222,6 +230,7 @@ function DisplayEmpDetails(data)
 	frmRecEntry.Deduct_Total.value=items[24];
 	frmRecEntry.Net_Salary.value=items[25];
 	frmRecEntry.Annum_Salary.value=items[26];
+	frmRecEntry.mailid.value=items[27];
 	
 	
 	document.getElementById('CatStatus').innerHTML = items[9];
@@ -361,6 +370,21 @@ function DisplayEmpDetails(data)
               </ul>
             </td>
           </tr>  
+		  <tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+				<li><a class = header href = "SalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Convert PDF</font></a></li>
+               
+              </ul>
+            </td>
+          </tr>
+		  <tr>
+            <td width="238" valign="center" colspan="3" height="21">
+              <ul style="color: #D99548" type="square">
+                <li><a class = header href = "MailsendSalarypdfForm.php?msg='Successfully Connection'"><font color="#000000">Mail Send</font></a></li>
+              </ul>
+            </td>
+          </tr>
 	<tr>
             <td width="238" valign="top" colspan="3" height="21">&nbsp;</td>
         </tr>
@@ -684,6 +708,7 @@ function DisplayEmpDetails(data)
     <td width="118" height="19" bgcolor="#EEEEEE">&nbsp;</td>
 	
       </tr>
+	  
       <tr class=bodytext>
     <td width="112" height="19" align="right" bgcolor="#EEEEEE">ESI No</td>
     <td width="191" height="19" bgcolor="#EEEEEE" ><input type="text" name="txtESINo" size="20" >
@@ -695,7 +720,11 @@ function DisplayEmpDetails(data)
 	<td width="19%" height="19" align="right" bgcolor="#EEEEEE">CTC</td>
     <td width="15%" height="19" bgcolor="#EEEEEE"><input type="text" name="Annum_Salary" size="20" readonly></td>
       </tr>
-
+	<tr>
+	  <td width="112" height="19" align="right" bgcolor="#EEEEEE">Mail ID</td>
+    <td width="191" height="19" bgcolor="#EEEEEE" ><input type="text" name="mailid" size="20" >
+     </td>
+	 </tr>
     </center>
 	</table>
 	<table>
@@ -836,16 +865,7 @@ function calculateSalary()
 	Pro_Tax=200;
 	
 	}
-	if(Gross>0 && Gross<15000)
-	{
-	esi=Math.ceil(Basic*0.0175);
-	esioff=Math.ceil(Basic*0.0475);
 	
-	}
-	else
-	{
-	esi=0;
-	}
 	if(cmbDsgn.match(cmbDsgn1)=="Director")
 	{
 	PF=0;
@@ -858,12 +878,26 @@ function calculateSalary()
 	}
 	}	
 	
+	
+	
+	if(Gross>0 && Gross<15000)
+	{
+	esi=parseInt(Gross * 0.0175);
+	esioff=parseInt(Gross * 0.0475);
+	
+	}
+	else
+	{
+	esi=0;
+	}
+	
 	specialallow=Math.ceil(Gross-(Basic+HRA+CCA+mra+lta));
 	EarnTotal=Math.ceil(Basic+HRA+CCA+mra+lta+specialallow);
+	
 	Total_Deduction = Math.ceil(PF + Pro_Tax + esi + tds);
 	
 	Net_Salary = Math.ceil(EarnTotal - Total_Deduction);
-	Annum_Salary=Gross*12;
+	Annum_Salary=Math.ceil(Gross*12);
 	
 	
 	
@@ -894,7 +928,7 @@ function onload_calculateSalary()
 {
 
 	var Annum_Salary;
-	var Gross = parseFloat(frmRecEntry.GrossSalary.value);
+	var Gross1 = parseFloat(frmRecEntry.GrossSalary.value);
 	var Inc = parseFloat(frmRecEntry.Inc.value);
 	var cmbDsgn=frmRecEntry.cmbDsgn.value;
 	var cmbDsgn1="Director";
@@ -956,16 +990,7 @@ function onload_calculateSalary()
 	Pro_Tax=200;
 	
 	}
-	if(Gross>0 && Gross<15000)
-	{
-	esi=Math.ceil(Basic*0.0175);
-	esioff=Math.ceil(Basic*0.0475);
-	}
-	else
-	{
-	esi=0;
 	
-	}
 	if(cmbDsgn.match(cmbDsgn1)=="Director")
 	{
 	PF=0;
@@ -978,12 +1003,26 @@ function onload_calculateSalary()
 	}
 	}	
 	
+	
+	
+	if(Gross>0 && Gross<15000)
+	{
+	esi=parseInt(Gross * 0.0175);
+	esioff=parseInt(Gross * 0.0475);
+	}
+	else
+	{
+	esi=0;
+	
+	}
+	
 	specialallow=Math.ceil(Gross-(Basic+HRA+CCA+mra+lta));
 	EarnTotal=Math.ceil(Basic+HRA+CCA+mra+lta+specialallow);
+	
 	Total_Deduction = Math.ceil(PF + Pro_Tax + esi + tds);
 	
 	Net_Salary = Math.ceil(EarnTotal - Total_Deduction);
-	Annum_Salary=Gross*12;
+	Annum_Salary=Math.ceil(Gross*12);
 	
 	
 	
@@ -1012,17 +1051,20 @@ function onload_calculateSalary()
 
 function upbasic()
 {
-	var Gross = parseFloat(frmRecEntry.GrossSalary.value);
+	var Gross1 = parseFloat(frmRecEntry.GrossSalary.value);
+	var Inc = parseFloat(frmRecEntry.Inc.value);
 	var Basic=parseFloat(frmRecEntry.Basic.value);	
 	var CCA=parseFloat(frmRecEntry.CCA.value);
 	var mra=parseFloat(frmRecEntry.mra.value);
 	var tds=parseFloat(frmRecEntry.tds.value);
 	var HRA=parseFloat(frmRecEntry.HRA.value);
+	var PF2=parseFloat(frmRecEntry.PF.value);
 	var Pro_Tax=parseFloat(frmRecEntry.Pro_Tax.value);
 	var cmbDsgn=frmRecEntry.cmbDsgn.value;
 	var cmbDsgn1="Director";
 	
 	var PF,lta,pfoff=0,esioff=0,esi=0;
+	var Gross;
 	
 	if(isNaN(Gross)) Gross=0;
 	if(isNaN(Basic)) Basic=0;
@@ -1032,11 +1074,13 @@ function upbasic()
 	if(isNaN(Pro_Tax)) Pro_Tax=0;
 	if(isNaN(tds)) tds=0;
 	if(isNaN(Pro_Tax)) Pro_Tax=0;
+	if(isNaN(PF2)) PF2=0;
+	if(isNaN(Inc)) Inc=0;
 	
-	
+	Gross=Math.ceil(Gross1+Inc);
 	lta=Math.ceil(Basic/12);
 	
-/*	
+	
 	if(Gross>0 && Gross<10000)
 	{
 	Pro_Tax=0;
@@ -1052,17 +1096,8 @@ function upbasic()
 	
 	}
 	
-	*/
-	if(Gross>0 && Gross<15000)
-	{
-	esi=Math.ceil(Basic*0.0175);
-	esioff=Math.ceil(Basic*0.0475);
 	
-	}
-	else
-	{
-	esi=0;
-	}
+	
 	
 	if(cmbDsgn.match(cmbDsgn1)=="Director")
 	{
@@ -1071,16 +1106,32 @@ function upbasic()
 	}
 	else
 	{
-	PF=Math.ceil(Basic*0.12);
-	pfoff=Math.ceil(Basic*0.1361);
+	PF=PF2;
+	pfoff=Math.ceil((PF2*13.61)/12);
+	//PF=Math.ceil(Basic*0.12);
+	//pfoff=Math.ceil(Basic*0.1361);
+	}
+	
+	
+	
+	if(Gross>0 && Gross<15000)
+	{
+	esi=parseInt(Gross * 0.0175);
+	esioff=parseInt(Gross * 0.0475);
+	
+	}
+	else
+	{
+	esi=0;
 	}
 	
 	specialallow=Math.ceil(Gross - (Basic + HRA + CCA + mra + lta));
 	EarnTotal=Math.ceil(Basic + HRA + CCA + mra + lta + specialallow);
+	
 	Total_Deduction = Math.ceil(PF + Pro_Tax + esi + tds);
 	
 	Net_Salary = Math.ceil(EarnTotal - Total_Deduction);
-	Annum_Salary=Gross*12;
+	Annum_Salary=Math.ceil(Gross*12);
 	
 	frmRecEntry.pfoff.value = pfoff;
 	frmRecEntry.esioff.value = esioff;	

@@ -3,6 +3,11 @@
 	include 'ServerDetail.php';
 
 	session_start();
+	
+	if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+			}
+	
 	$Company = $_SESSION['company'];
 	//echo $Company; 
 
@@ -56,27 +61,27 @@
 	{
 		if($RowCnt != 0)
 			echo "<br>";
-		echo "</Table><table border='1' width='1050' cellspacing='0' cellpadding='4' align = 'center' bgcolor='#FFFFFF'>";
+		echo "</Table><table border='1' width='1700' cellspacing='0' cellpadding='4' align = 'center' bgcolor='#FFFFFF'>";
               	echo "<tr class=header>";
-                echo "<td width='120' valign='middle' bgcolor='#C0C0C0'>";
+                echo "<td width='110' valign='middle' bgcolor='#C0C0C0'>";
                   echo "<p align='center'>Emp Name</p>";
                 echo "</td>";
-				echo "<td width='120' valign='middle' bgcolor='#C0C0C0'>";
+				echo "<td width='70' valign='middle' bgcolor='#C0C0C0'>";
                   echo "<p align='center'>Emp ID</p>";
                 echo "</td>";
-                echo "<td width='400' bgcolor='#C0C0C0' valign='middle'>";
+                echo "<td width='70' bgcolor='#C0C0C0' valign='middle'>";
                   echo "<p align='center'>DOJ</p>";
                 echo "</td>";
-                echo "<td width='80' bgcolor='#C0C0C0' valign='middle'>";
+                echo "<td width='50' bgcolor='#C0C0C0' valign='middle'>";
                   echo "<p align='center'>Inc. Amt</p>";
                 echo "</td>";
-                echo "<td width='400' bgcolor='#C0C0C0' valign='middle'>";
+                echo "<td width='70' bgcolor='#C0C0C0' valign='middle'>";
                   echo "<p align='center'>DOI</p>";
                 echo "</td>";
-                 echo "<td width='40' bgcolor='#C0C0C0' valign='middle'>";
+                 echo "<td width='20' bgcolor='#C0C0C0' valign='middle'>";
                   echo "<p align='center'>Total Days</p>";
                 echo "</td>";
-                echo "<td width='40' bgcolor='#C0C0C0' valign='middle'>";
+                echo "<td width='20' bgcolor='#C0C0C0' valign='middle'>";
                   echo "<p align='center'>Days prtd</p>";
                 echo "</td>";
                 echo "<td width='70' bgcolor='#C0C0C0' valign='middle'>";
@@ -129,7 +134,7 @@
                 echo "<td width='80' bgcolor='#C0C0C0' valign='middle'>";
                   echo "<p align='center'>Net Salary</p>";
                 echo "</td>";
-                echo "<td width='100' bgcolor='#C0C0C0' valign='middle'>";
+                echo "<td width='50' bgcolor='#C0C0C0' valign='middle'>";
                   echo "<p align='center'>A/C No.</p>";
                 echo "</td>";
             	echo "</tr>";
@@ -155,12 +160,12 @@
 			if($RowCnt % 40 == 0) InsertHeader($RowCnt);
 			$RowCnt++;
 			echo("<tr class = header>");
-			if(($Company == 'A') ||($Company == 'I') || ($Company == 'B'))
+			if(($Company == 'A') ||($Company == 'I') || ($Company == 'M') ||($Company == 'B'))
 			
-			echo("<td width='44' colspan  = 21 bgcolor='#C0C0C0' align = 'center' valign='middle'>$row[0]</td>");
+			echo("<td width='44' colspan  = 25 bgcolor='#C0C0C0' align = 'center' valign='middle'>$row[0]</td>");
 			echo("</tr>");
 
-			if(($Company == 'A') ||($Company == 'I') || ($Company == 'B'))
+			if(($Company == 'A') ||($Company == 'A') ||($Company == 'M') || ($Company == 'B'))
 			{
 				$query = "select p.NAME,p.EMP_NO,e.DATE_OF_JOINING,i.AMOUNT,p.WORKING_DAYS,p.PRESENT_DAYS,p.BASIC,p.LTA,p.HRA,p.CCA,p.SPECIALALLOW,p.MR,p.EARNED_SALARY,p.PRO_TAX,p.PF,p.ESI,p.TDS,p.OTHERS,p.ADVANCE,p.DEDUCT_TOTAL,p.GROSS_SALARY,p.NET_SAL,e.ACNO,i.MONTH,i.YEAR from employee e,incrementdetails i, paydetails1 p where e.DEPT = '$row[0]' AND p.MONTH = '$cMon' AND p.YEAR = '$cYer' AND e.EMP_NO = p.EMP_NO AND e.EMP_NO = i.EMP_NO AND p.COMPANY = '$Company'";
 			}
@@ -176,9 +181,9 @@
 			
 			while ($rows = mysql_fetch_array($result))
 			{
-				$subyear = substr($rows[20], -2);
+				$subyear = substr($rows[24], -2);
 
-				$MonName = str_pad($rows[19] +1, 2, "0", STR_PAD_LEFT);	
+				$MonName = str_pad($rows[23] +1, 2, "0", STR_PAD_LEFT);	
 			
 				$Emp_DOJ = substr($rows[0], 0, 6);
 
@@ -187,7 +192,7 @@
 				echo("<tr class = bodytext>");
 				echo("<td width='120' bgcolor='#C0C0C0' >$rows[0]</td>");
 				echo("<td width='120' bgcolor='#C0C0C0' >$rows[1]</td>");
-				echo("<td width='100' bgcolor='#C0C0C0' >$Emp_DOJ</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' >$rows[2]</td>");
 				if($rows[3] == 0)
 					echo("<td width='44' bgcolor='#C0C0C0' >NIL</td>");
 				else
@@ -324,6 +329,9 @@
 
 		echo("<tr class=header>");
         		echo("<td valign='middle' bgcolor='#C0C0C0'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pro Tax&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;Rs.  $rows[9]</td>");
+		echo("</tr>");
+		echo("<tr class=header>");
+        		echo("<td valign='middle' bgcolor='#C0C0C0'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TDS&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;Rs.  $rows[10]</td>");
 		echo("</tr>");
 
 		echo("<tr class=header>");

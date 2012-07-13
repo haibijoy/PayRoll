@@ -2,6 +2,11 @@
 	include 'ServerDetail.php';
 
 session_start();
+
+if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+			}
+
 $Company = $_SESSION['company'];
 echo $Company;
 
@@ -35,6 +40,7 @@ $Net_Salary = $_POST['Net_Salary'];
 $Annum_Salary = $_POST['Annum_Salary'];
 $pfoff = $_POST['pfoff'];
 $esioff = $_POST['esioff'];
+$mailid = $_POST['mailid'];
 
 $DOJ = $_POST['DOJ'];
 $DOR = $_POST['DOR'];
@@ -56,13 +62,20 @@ $Sel_EmpId     = $_POST['EmpId'];
 $Add_Details   = $_POST['Add_Edit'];
 $Save_Details  = $_POST['operation'];
 $UserName      = $_POST['User'];
+$NewUser1      = $_POST['NewUser'];
+$Oldpwd        = $_POST['OldPass'];
 $newpwd        = $_POST['NewPass'];
-$Oldname       = $_POST['name'];
+$Oldname	   = $_POST['User'];
 
-
-
-
-
+if($UserName != $NewUser1)
+	{
+	$NewUser = $NewUser1;
+	}
+else if($NewUser1=="" || $UserName==$NewUser)
+	{
+	$NewUser = $UserName;
+	}
+	
 $socket = mysql_connect('localhost', $user, $pass);
 if (! $socket)
 	die ("Could not connect to MySql Server");
@@ -95,7 +108,7 @@ if($Save_Details == "Details" && $Add_Details == "Add")
 		
 		mysql_free_result($result);
 		
-		$query = "insert into employee (NAME, EMP_NO, ACNO, DEPT, DSGN, GROSS_SALARY, DATE_OF_JOINING, COMPANY, GRADE , CATEGORY, DATE_OF_RESIGNING, PFNO, ESINO, BASIC, HRA, LTA,CCA, SPECIALALLOW, MR, EARNTOTAL, PF, ESI, PRO_TAX, TDS, DEDUCT_TOTAL, NET_SALARY, ANNUM_SALARY, PFOFF, ESIOFF ) values('${Name}','${EmpId}', '${AcNo}', '${Department}', '${Designation}', '${Gross}','${DOJ}','${Company}', '${Dir_Grade}','${Category}','${DOR}','${PFNo}','${ESINo}','${Basic}','${HRA}','${lta}','${CCA}','${specialallow}','${mr}','${Salary_Total}','${PF}','${esi}','${Pro_Tax}','${tds}','${Deduct_Total}','${Net_Salary}','${Annum_Salary}','${pfoff}','${esioff}')";	
+		$query = "insert into employee (NAME, EMP_NO, ACNO, DEPT, DSGN, GROSS_SALARY, DATE_OF_JOINING, COMPANY, GRADE , CATEGORY, DATE_OF_RESIGNING, PFNO, ESINO, BASIC, HRA, LTA,CCA, SPECIALALLOW, MR, EARNTOTAL, PF, ESI, PRO_TAX, TDS, DEDUCT_TOTAL, NET_SALARY, ANNUM_SALARY, MAIL_ID, PFOFF, ESIOFF ) values('${Name}','${EmpId}', '${AcNo}', '${Department}', '${Designation}', '${Gross}','${DOJ}','${Company}', '${Dir_Grade}','${Category}','${DOR}','${PFNo}','${ESINo}','${Basic}','${HRA}','${lta}','${CCA}','${specialallow}','${mr}','${Salary_Total}','${PF}','${esi}','${Pro_Tax}','${tds}','${Deduct_Total}','${Net_Salary}','${Annum_Salary}','${mailid}','${pfoff}','${esioff}')";	
 		
 		
 
@@ -132,7 +145,7 @@ else if($Save_Details == "Details" && $Add_Details == "Edit" && ($Increment == 0
 		}
 	
 	
-	$query = "UPDATE employee SET NAME = '${Name}',EMP_NO = '${EmpId}', ACNO = '${AcNo}', DEPT = '${Department}', DSGN = '${Designation}', GROSS_SALARY = '${Gross}', DATE_OF_JOINING = '${DOJ}', COMPANY = '${Company}', GRADE = '${Dir_Grade}' ,CATEGORY = '${Category}', DATE_OF_RESIGNING = '${DOR}',PFNO = '${PFNo}' , ESINO = '${ESINo}',BASIC='${Basic}',HRA='${HRA}',LTA='${lta}',CCA='${CCA}',SPECIALALLOW='${specialallow}',MR='${mr}',EARNTOTAL='${Salary_Total}',PF='${PF}',ESI='${esi}',PRO_TAX='${Pro_Tax}',TDS='${tds}',DEDUCT_TOTAL='${Deduct_Total}',NET_SALARY='${Net_Salary}',ANNUM_SALARY='${Annum_Salary}',PFOFF='${pfoff}',ESIOFF='${esioff}' WHERE NAME='${Sel_EmpName}' AND EMP_NO='${Sel_EmpId}'";
+	$query = "UPDATE employee SET NAME = '${Name}',EMP_NO = '${EmpId}', ACNO = '${AcNo}', DEPT = '${Department}', DSGN = '${Designation}', GROSS_SALARY = '${Gross}', DATE_OF_JOINING = '${DOJ}', COMPANY = '${Company}', GRADE = '${Dir_Grade}' ,CATEGORY = '${Category}', DATE_OF_RESIGNING = '${DOR}',PFNO = '${PFNo}' , ESINO = '${ESINo}',BASIC='${Basic}',HRA='${HRA}',LTA='${lta}',CCA='${CCA}',SPECIALALLOW='${specialallow}',MR='${mr}',EARNTOTAL='${Salary_Total}',PF='${PF}',ESI='${esi}',PRO_TAX='${Pro_Tax}',TDS='${tds}',DEDUCT_TOTAL='${Deduct_Total}',NET_SALARY='${Net_Salary}',ANNUM_SALARY='${Annum_Salary}',MAIL_ID='${mailid}',PFOFF='${pfoff}',ESIOFF='${esioff}' WHERE NAME='${Sel_EmpName}' AND EMP_NO='${Sel_EmpId}'";
 	
 	$result = mysql_query($query);
 	
@@ -201,7 +214,7 @@ else if($Increment != 0 && $Save_Details == "Details" && $Add_Details == "Edit")
 				mysql_free_result($result);
 				*/
 
-				$query = "UPDATE employee SET NAME = '${Name}',EMP_NO = '${EmpId}', ACNO = '${AcNo}', DEPT = '${Department}', DSGN = '${Designation}', GROSS_SALARY = '${Gross}', DATE_OF_JOINING = '${DOJ}', COMPANY = '${Company}', GRADE = '${Dir_Grade}' ,CATEGORY = '${Category}', DATE_OF_RESIGNING = '${DOR}',PFNO = '${PFNo}' , ESINO = '${ESINo}',BASIC='${Basic}',HRA='${HRA}',LTA='${lta}',CCA='${CCA}',SPECIALALLOW='${specialallow}',MR='${mr}',EARNTOTAL='${Salary_Total}',PF='${PF}',ESI='${esi}',PRO_TAX='${Pro_Tax}',TDS='${tds}',DEDUCT_TOTAL='${Deduct_Total}',NET_SALARY='${Net_Salary}',ANNUM_SALARY='${Annum_Salary}',PFOFF='${pfoff}',ESIOFF='${esioff}' WHERE NAME='${Sel_EmpName}' AND EMP_NO='${Sel_EmpId}'";
+				$query = "UPDATE employee SET NAME = '${Name}',EMP_NO = '${EmpId}', ACNO = '${AcNo}', DEPT = '${Department}', DSGN = '${Designation}', GROSS_SALARY = '${Gross}', DATE_OF_JOINING = '${DOJ}', COMPANY = '${Company}', GRADE = '${Dir_Grade}' ,CATEGORY = '${Category}', DATE_OF_RESIGNING = '${DOR}',PFNO = '${PFNo}' , ESINO = '${ESINo}',BASIC='${Basic}',HRA='${HRA}',LTA='${lta}',CCA='${CCA}',SPECIALALLOW='${specialallow}',MR='${mr}',EARNTOTAL='${Salary_Total}',PF='${PF}',ESI='${esi}',PRO_TAX='${Pro_Tax}',TDS='${tds}',DEDUCT_TOTAL='${Deduct_Total}',NET_SALARY='${Net_Salary}',ANNUM_SALARY='${Annum_Salary}',MAIL_ID='${mailid}',PFOFF='${pfoff}',ESIOFF='${esioff}' WHERE NAME='${Sel_EmpName}' AND EMP_NO='${Sel_EmpId}'";
 				
 				//$query ="UPDATE employee SET GROSS_SALARY=$GROSS_SALARY where EMP_NO = '$EId' AND DEPT = '".$dept."' AND COMPANY = '".$Company."'";
 
@@ -240,7 +253,7 @@ else if($Save_Details == "DeptAdd")
 else if($Save_Details == "ChangePass")
 {
 
-	$changequery = "UPDATE userinfo SET USER_NAME ='${UserName}' ,PASS_WORD = '${newpwd }' WHERE USER_NAME='${Oldname}'";
+	$changequery = "UPDATE userinfo SET USER_NAME ='${NewUser}' ,PASS_WORD ='${newpwd }' WHERE USER_NAME='${Oldname}'";
 
 	$changeresult = mysql_query($changequery);
 

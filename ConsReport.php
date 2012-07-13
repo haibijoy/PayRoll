@@ -3,6 +3,11 @@
 		include 'ServerDetail.php';
 
 		session_start();
+		
+		if (!isset($_SESSION['user'])) {
+        header('Location: index.php');
+}
+		
 		$Company = $_SESSION['company'];
 ?>
 
@@ -62,7 +67,7 @@
 <form name = 'frmRecEntry'>
 <DIV ID = 'list'>
  
-	<table border="1" width="1050" cellspacing="0" cellpadding="4" align = 'center' style = 'border'>              
+	<table border="1" width="700" cellspacing="0" cellpadding="4" align = 'center' style = 'border'>              
 
 	<?php
 		$socket = mysql_connect('localhost', $user, $pass);
@@ -91,10 +96,10 @@
 				echo("<tr class=header >");
 						echo("<td width='15' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
                   		echo("S.No");
-                		echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                		echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'left'>");
                   		echo("Emp Name");
                 		echo("</td>");
-						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'left'>");
                   		echo("Emp ID");
                 		echo("<td width='20' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Pro_Tax");
@@ -148,9 +153,9 @@
 				echo("<tr class=header >");
                 		echo("<td width='10' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
                   		echo("S.No");
-						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+						echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'left'>");
                   		echo("Emp Name");
-						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'left'>");
                   		echo("Emp ID");
                 		echo("</td>");
                 		echo("<td width='40' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
@@ -168,8 +173,8 @@
 
 			echo("<tr class = bodytext>");
 			echo("<td width='10' bgcolor='#C0C0C0' align = 'center'>$iRecCount1</td>");
-			echo("<td width='70' bgcolor='#C0C0C0' align = 'center'>$rows[0]</td>");
-			echo("<td width='70' bgcolor='#C0C0C0' align = 'center'>$rows[1]</td>");
+			echo("<td width='100' bgcolor='#C0C0C0' align = 'left'>$rows[0]</td>");
+			echo("<td width='70' bgcolor='#C0C0C0' align = 'left'>$rows[1]</td>");
 			echo("<td width='40' bgcolor='#C0C0C0' >$rows[2]</td>");
 			echo("<td width='30' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
 			echo("</tr>");
@@ -210,10 +215,10 @@
 						echo("<tr class=header >");
 						echo("<td width='10' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("S.No");
-                		echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                		echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'left'>");
                   		echo("Emp Name");
                 		echo("</td>");
-						echo("<td width='70' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+						echo("<td width='70' bgcolor='#C0C0C0' valign='middle' align = 'left'>");
                   		echo("Emp ID");
                 		echo("<td width='50' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("ESI No");
@@ -236,8 +241,8 @@
 
 			echo("<tr class = bodytext>");
 			echo("<td width='10' bgcolor='#C0C0C0' align = 'center'>$iRecCount1</td>");
-			echo("<td width='70' bgcolor='#C0C0C0' align = 'center'>$rows[0]</td>");
-			echo("<td width='70' bgcolor='#C0C0C0' align = 'center'>$rows[1]</td>");
+			echo("<td width='100' bgcolor='#C0C0C0' align = 'left'>$rows[0]</td>");
+			echo("<td width='70' bgcolor='#C0C0C0' align = 'left'>$rows[1]</td>");
 			echo("<td width='30' bgcolor='#C0C0C0' >$rows[2]</td>");
 			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
 			echo("<td width='25' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
@@ -282,7 +287,7 @@
 				echo("<tr class=header >");
 						echo("<td width='10' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
                   		echo("S.No");
-						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+						echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
                   		echo("Emp Name");
                 		echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
                   		echo("Emp ID");
@@ -296,9 +301,9 @@
 		while ($rows = mysql_fetch_array($result))
 		{
 			echo("<tr class = bodytext>");
-			echo("<td width='130' bgcolor='#C0C0C0' align = 'center'>$iRecCount1</td>");
-			echo("<td width='130' bgcolor='#C0C0C0' align = 'center'>$rows[0]</td>");
-			echo("<td width='130' bgcolor='#C0C0C0' align = 'center'>$rows[1]</td>");
+			echo("<td width='10' bgcolor='#C0C0C0' align = 'center'>$iRecCount1</td>");
+			echo("<td width='100' bgcolor='#C0C0C0' align = 'left'>$rows[0]</td>");
+			echo("<td width='70' bgcolor='#C0C0C0' align = 'left'>$rows[1]</td>");
 			echo("<td width='70' bgcolor='#C0C0C0' >$rows[2]</td>");
 			echo("</tr>");
 			$iRecCount++;
@@ -339,10 +344,10 @@
 				echo("<tr class=header >");
                 		echo("<td width='10' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
                   		echo("S.No");
-						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+						echo("<td width='100' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
                   		echo("Emp Name");
                 		echo("</td>");
-						echo("<td width='50' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+						echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
                   		echo("Emp ID");
                 		echo("<td width='70' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("PFNo");
@@ -366,8 +371,8 @@
 
 			echo("<tr class = bodytext>");
 			echo("<td width='10' bgcolor='#C0C0C0' align = 'center'>$iRecCount1</td>");
-			echo("<td width='70' bgcolor='#C0C0C0' align = 'center'>$rows[0]</td>");
-			echo("<td width='70' bgcolor='#C0C0C0' align = 'center'>$rows[1]</td>");
+			echo("<td width='100' bgcolor='#C0C0C0' align = 'left'>$rows[0]</td>");
+			echo("<td width='70' bgcolor='#C0C0C0' align = 'left'>$rows[1]</td>");
 			echo("<td width='70' bgcolor='#C0C0C0' >$rows[2]</td>");
 			echo("<td width='30' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
 			echo("<td width='30' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[4]</td>");
@@ -415,10 +420,10 @@
         		echo("<td width='10' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
           		echo("S.No.");
         		echo("</td>");
-        		echo("<td width='80' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+        		echo("<td width='100' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
           		echo("Emp Name");
         		echo("</td>");
-        		echo("<td width='50' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+        		echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
           		echo("Emp ID");
         		echo("</td>");
         		echo("<td width='30' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
@@ -434,8 +439,8 @@
 				
 				echo("<tr class = bodytext>");
 				echo("<td width='10' bgcolor='#C0C0C0' align = 'left' valign='middle'>$iRecCount1</td>");
-				echo("<td width='80' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");
-				echo("<td width='50' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[1]</td>");
+				echo("<td width='100' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[0]</td>");
+				echo("<td width='70' bgcolor='#C0C0C0' align = 'left' valign='middle'>$rows[1]</td>");
 				echo("<td width='30' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[2]</td>");
 				echo("<td width='50' bgcolor='#C0C0C0' align = 'center' valign='middle'>$rows[3]</td>");
 				echo("</tr>");
@@ -475,10 +480,10 @@
                 		echo("<td width='10' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("S.No.");
                 		echo("</td>");
-                		echo("<td width='70' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
+                		echo("<td width='100' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
                   		echo("Emp Name");
                 		echo("</td>");
-                		echo("<td width='50' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
+                		echo("<td width='70' valign='middle' bgcolor='#C0C0C0' align = 'center'>");
                   		echo("Emp ID");
                 		echo("</td>");
                 		echo("<td width='50' bgcolor='#C0C0C0' valign='middle' align = 'center'>");
@@ -494,8 +499,8 @@
 			
 			echo("<tr class = bodytext>");
 			echo("<td width='10' bgcolor='#C0C0C0' align = 'center'>$iRecCount1</td>");
-			echo("<td width='70' bgcolor='#C0C0C0' align = 'center'>$rows[0]</td>");
-			echo("<td width='50' bgcolor='#C0C0C0'align = 'center'>$rows[1]</td>");
+			echo("<td width='100' bgcolor='#C0C0C0' align = 'left'>$rows[0]</td>");
+			echo("<td width='70' bgcolor='#C0C0C0'align = 'left'>$rows[1]</td>");
 			echo("<td width='50' bgcolor='#C0C0C0'align = 'center'>$rows[2]</td>");
 			echo("<td width='30' bgcolor='#C0C0C0'align = 'center'>$rows[3]</td>");
 			echo("</tr>");

@@ -1,6 +1,6 @@
 <?php
 $user = "root";
-$pass = "root";
+$pass = "";
 $db = "mspl_payroll";
 
 	$socket = mysql_connect('localhost', $user, $pass);

@@ -1,9 +1,21 @@
-<!doctype html>
+<?php
+
+// Inialize session
+session_start();
+
+// Check, if user is already login, then jump to secured page
+if (isset($_SESSION['user'])) {
+        header('Location: Main.php');
+}
+
+?>
+
+<html>
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <meta name="GENERATOR" content="Microsoft FrontPage 4.0"><LINK 
-href="_css/global.css" type=text/css rel=stylesheet>
+href="_CSS/global.css" type=text/css rel=stylesheet>
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <title>Log in</title>
 </head>
@@ -39,8 +51,10 @@ function SendData()
 {
 
 var cLower = lform.user.value;
+var pLower = lform.password.value;
 
 lform.user.value = cLower.toLowerCase();
+lform.password.value = pLower.toLowerCase();
 
 	if(lform.user.value == "")
 	{
@@ -55,7 +69,7 @@ lform.user.value = cLower.toLowerCase();
 	return;
 	}
 
-	lform.action ="Main.php?msg='Successfully Connection'";
+	//lform.action ="Main.php?msg='Successfully Connection'";
 	lform.submit();
 }
 
@@ -88,7 +102,7 @@ window.onresize = CenterTable
   </tr>
   <center>
   <tr>
-    <td width="346" height="1" colspan="3"><img src="img/dataentryindia.jpg" width="346" height="178"></td>
+    <td width="346" height="1" colspan="3"><IMG src="img/dataentryindia.jpg" width="346" height="178"></td>
     <td width="285" height="1" bgcolor="#ededed">
 	  <form action = "Main.php" method="post" name="lform">
       <TABLE style="background-color: #ededed" width="279" height="122">
@@ -131,18 +145,18 @@ window.onresize = CenterTable
   </center>
     <td width="739" height="29" bgcolor="#DDDDDD" align="center" colspan="3">
       <p align="left"><A class=Legal  
-      href="http://www.meltronicsgroup.com" >
+      href="http://www.meltronicsgroup.com" onclick ="alert(' Connect to internet');">
 	  www.meltronicsgroup.com</A>  <font color="#666666"> |&nbsp;</font><A class=Legal  
-      href="http://www.meltronicsgroup.com/about.html" onclick = "alert('Please connect to internet');" 
+      href="http://www.meltronicsgroup.com/about.html" onclick = "alert(' Connect to internet');" 
       >About Us</A>  <font color="#666666">|</font> <A class=Legal  
-      href="http://www.meltronicsgroup.com/contact.html" onclick = "alert('Please connect to internet');" 
+      href="http://www.meltronicsgroup.com/contact.html" onclick = "alert(' Connect to internet');" 
       >Contact</A></p>
   </td>
 
   </tr>
   <tr>
     <td class=CopyrightText width="633" height="26" colspan="4" bgcolor="#C6C6C6">
-      <p align="right">&copy; <?php echo date('Y') ?> Meltronics Systemtech Pvt. Ltd.,India</td>
+      <p align="right">©<?php echo date('Y'); ?> Meltronics Systemtech Pvt. Ltd.,India</td>
   </tr>
 </table>
 
